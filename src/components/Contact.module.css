@@ -1,0 +1,106 @@
+.contact {
+  background: var(--bg-dark);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 100px;
+  align-items: center;
+}
+
+.info h2 {
+  font-size: 3rem;
+  margin-bottom: 20px;
+}
+
+.info p {
+  color: var(--text-dim);
+  font-size: 1.2rem;
+  margin-bottom: 40px;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  color: var(--text-main);
+  font-size: 1.1rem;
+}
+
+.icon {
+  color: var(--primary);
+}
+
+.form {
+  padding: 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.group label {
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.group input, .group textarea {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 15px;
+  border-radius: 4px;
+  color: white;
+  font-family: inherit;
+  transition: border-color 0.3s ease;
+}
+
+.group input:focus, .group textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.group textarea {
+  height: 150px;
+  resize: vertical;
+}
+
+.submitBtn {
+  background: var(--primary);
+  color: #000000;
+  padding: 18px;
+  border-radius: 4px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: all 0.3s ease;
+  margin-top: 20px;
+}
+
+.submitBtn:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 20px rgba(212, 175, 55, 0.4);
+}
+
+@media (max-width: 900px) {
+  .container {
+    grid-template-columns: 1fr;
+    gap: 60px;
+  }
+}

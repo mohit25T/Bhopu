@@ -1,0 +1,46 @@
+.page {
+  min-height: 100vh;
+  background: var(--bg-dark);
+  padding-top: 100px; /* Account for navbar */
+}
+
+.header {
+  padding: 60px 5%;
+  text-align: center;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+}
+
+.headerContent h1 {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  margin-bottom: 16px;
+}
+
+.headerContent p {
+  color: var(--text-dim);
+  font-size: 1.1rem;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.gridSection {
+  padding: 80px 5%;
+}
+
+.grid {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 40px;
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+  
+  .header {
+    padding: 40px 5%;
+  }
+}

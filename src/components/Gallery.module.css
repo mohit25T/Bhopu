@@ -1,0 +1,60 @@
+.gallery {
+  background: var(--surface-dark);
+  text-align: center;
+}
+
+.header {
+  margin-bottom: 60px;
+}
+
+.header h2 {
+  font-size: 3rem;
+  margin-bottom: 16px;
+}
+
+.header p {
+  color: var(--text-dim);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.display {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.mainImage {
+  position: relative;
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--shadow-luxe);
+}
+
+.mainImage img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 40px;
+  background: linear-gradient(0deg, rgba(5,5,5,0.9) 0%, rgba(5,5,5,0) 100%);
+  text-align: left;
+}
+
+.caption h3 {
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+  color: var(--primary);
+}
+
+.caption p {
+  color: var(--text-main);
+  font-weight: 300;
+  letter-spacing: 1px;
+}
