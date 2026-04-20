@@ -14,6 +14,16 @@ export const ProductProvider = ({ children }) => {
     try {
       setLoading(true);
       const response = await fetch(`${API_BASE_URL}/api/products`);
+      
+      if (!response.ok) {
+        throw new Error(`Server responded with ${response.status}`);
+      }
+
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new TypeError("Oops, the server didn't send back JSON data!");
+      }
+
       const data = await response.json();
       
       // Map _id to id for frontend compatibility
