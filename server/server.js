@@ -29,13 +29,26 @@ if (!fs.existsSync(distPath)) {
 }
 app.use(express.static(distPath));
 
-// Database Connection
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('✅ Connected to MongoDB Atlas'))
-  .catch(err => console.error('❌ MongoDB Connection Error:', err));
+// Database Connection Configuration
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log('✅ Connected to MongoDB Atlas');
+    
+    app.listen(PORT, () => {
+      console.log(`🚀 Production Server running on port ${PORT}`);
+    });
+  } catch (err) {
+    console.error('❌ MongoDB Connection Error:', err);
+    process.exit(1);
+  }
+};
 
 // API Routes
 // (Existing routes remain)
+
+// Health Check
+app.get('/api/health', (req, res) => res.json({ status: 'active', time: new Date() }));
 
 // GET all products
 app.get('/api/products', async (req, res) => {
@@ -100,6 +113,10 @@ app.use((req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+// Start Sequence
+connectDB();
+
+// Global Shield against silent crashes
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
