@@ -20,14 +20,14 @@ const ProductsPage = () => {
   const { products = [], loading } = useProducts() || {}; // Safety fallback to empty array
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  if (loading) {
-    return <div className={styles.page}><div className={styles.loading}>Curating Collections...</div></div>;
-  }
-  
   // Scroll to top on mount
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  if (loading) {
+    return <div className={styles.page}><div className={styles.loading}>Curating Collections...</div></div>;
+  }
 
   return (
     <div className={styles.page}>
