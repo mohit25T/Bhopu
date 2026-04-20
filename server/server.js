@@ -21,6 +21,12 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Serve static files from the React app (dist folder)
 const distPath = path.join(__dirname, '../dist');
+
+// Check if build exists
+import fs from 'fs';
+if (!fs.existsSync(distPath)) {
+  console.warn('⚠️  Warning: dist folder not found. Please run "npm run build" first.');
+}
 app.use(express.static(distPath));
 
 // Database Connection
@@ -86,7 +92,12 @@ app.delete('/api/products/:id', async (req, res) => {
 
 // Catch-all: If any request reaches this point without being handled by API, serve the React app
 app.use((req, res) => {
-  res.sendFile(path.join(__dirname, '../dist', 'index.html'));
+  const indexPath = path.join(distPath, 'index.html');
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    res.status(404).send('<h3>Bhopu Jewels: Website build files not found!</h3><p>Please ensure you have run "npm run build" and configured Render to use static serving.</p>');
+  }
 });
 
 app.listen(PORT, () => {
