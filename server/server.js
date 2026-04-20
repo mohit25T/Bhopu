@@ -84,8 +84,8 @@ app.delete('/api/products/:id', async (req, res) => {
   }
 });
 
-// Catch-all route to serve React app for any non-API request
-app.get('(.*)', (req, res) => {
+// Catch-all: If any request reaches this point without being handled by API, serve the React app
+app.use((req, res) => {
   res.sendFile(path.join(__dirname, '../dist', 'index.html'));
 });
 
