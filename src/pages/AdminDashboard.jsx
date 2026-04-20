@@ -70,180 +70,181 @@ const AdminDashboard = () => {
     setIsAuthenticated(true);
   };
 
-  // Security Gate
-  if (!isAuthenticated) {
-    return <AdminLogin onLogin={handleLoginSuccess} />;
-  }
-
-  if (loading) {
-    return <div className={styles.adminPage}><div className={styles.loading}>Synchronizing Catalog...</div></div>;
-  }
-
   return (
     <div className={styles.adminPage}>
-      <header className={styles.header}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h1 className="gold-text">Store Management</h1>
-          <button onClick={handleLogout} className={styles.logoutBtn} title="Log Out">
-            <LogOut size={20} />
-          </button>
+      {!isAuthenticated ? (
+        <AdminLogin onLogin={handleLoginSuccess} />
+      ) : loading ? (
+        <div className={styles.loadingWrapper}>
+          <div className={styles.loading}>Synchronizing Catalog...</div>
         </div>
-        <p>Manage your luxury catalog, update inventory, and stock levels.</p>
-      </header>
-
-      <div className={styles.container}>
-        {/* Add Product Form */}
-        <section className={`glass-card ${styles.addSection}`}>
-          <h2>Add New Masterpiece</h2>
-          <form onSubmit={handleAdd} className={styles.addForm}>
-            <input 
-              type="text" 
-              placeholder="Product Name" 
-              value={newProduct.name} 
-              onChange={e => setNewProduct({...newProduct, name: e.target.value})} 
-            />
-            <input 
-              type="text" 
-              placeholder="Price (e.g. $2,500)" 
-              value={newProduct.price} 
-              onChange={e => setNewProduct({...newProduct, price: e.target.value})} 
-            />
-            <select 
-              value={newProduct.category} 
-              onChange={e => setNewProduct({...newProduct, category: e.target.value})}
-            >
-              <option value="Rings">Rings</option>
-              <option value="Necklaces">Necklaces</option>
-              <option value="Earrings">Earrings</option>
-              <option value="Bracelets">Bracelets</option>
-              <option value="Watches">Watches</option>
-              <option value="Brooches">Brooches</option>
-            </select>
-            <textarea 
-              placeholder="Short Description" 
-              value={newProduct.desc} 
-              onChange={e => setNewProduct({...newProduct, desc: e.target.value})}
-            ></textarea>
-            
-            <div className={styles.imageUploadSection}>
-              <input 
-                type="file" 
-                accept="image/*"
-                onChange={handleFileChange}
-                ref={fileInputRef}
-                style={{ display: 'none' }}
-              />
-              
-              {!newProduct.image ? (
-                <div className={styles.uploadPlaceholder} onClick={() => fileInputRef.current.click()}>
-                  <Upload size={24} />
-                  <span>Upload Product Image</span>
-                  <small>Max size: 1MB</small>
-                </div>
-              ) : (
-                <div className={styles.imagePreviewContainer}>
-                  <img 
-                    src={newProduct.image} 
-                    alt="Preview" 
-                    className={styles.imagePreview} 
-                    onClick={() => setSelectedImage({ url: newProduct.image, name: newProduct.name })}
-                    style={{ cursor: 'pointer' }}
-                  />
-                  <button type="button" className={styles.removeImageBtn} onClick={removeImage}>
-                    <XCircle size={18} />
-                  </button>
-                </div>
-              )}
+      ) : (
+        <>
+          <header className={styles.header}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h1 className="gold-text">Store Management</h1>
+              <button onClick={handleLogout} className={styles.logoutBtn} title="Log Out">
+                <LogOut size={20} />
+              </button>
             </div>
-            
-            <button type="submit" className={styles.addBtn}><Plus size={20} /> Add to Catalog</button>
-          </form>
-        </section>
+            <p>Manage your luxury catalog, update inventory, and stock levels.</p>
+          </header>
 
-        {/* Product List */}
-        <section className={styles.listSection}>
-          <h2>Current Inventory</h2>
-          <div className={styles.tableWrapper}>
-            <table className={styles.table}>
-              <thead>
-                <tr>
-                  <th>Product</th>
-                  <th>Price</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {products.map(p => (
-                  <tr key={p.id} className={editingId === p.id ? styles.editingRow : ''}>
-                    <td>
-                      {editingId === p.id ? (
-                        <div className={styles.editProduct}>
-                          <input 
-                            type="text" 
-                            value={editData.name} 
-                            onChange={e => setEditData({...editData, name: e.target.value})} 
-                          />
-                        </div>
-                      ) : (
-                        <div className={styles.productCell}>
-                          <img 
-                            src={p.image} 
-                            alt="" 
-                            className={styles.thumb} 
-                            onClick={() => setSelectedImage({ url: p.image, name: p.name })}
-                            style={{ cursor: 'pointer' }}
-                          />
-                          <div>
-                            <strong>{p.name}</strong>
-                            <span>{p.category}</span>
-                          </div>
-                        </div>
-                      )}
-                    </td>
-                    <td>
-                      {editingId === p.id ? (
-                        <input 
-                          type="text" 
-                          value={editData.price} 
-                          onChange={e => setEditData({...editData, price: e.target.value})} 
-                        />
-                      ) : (
-                        <span className={styles.priceView}>{p.price}</span>
-                      )}
-                    </td>
-                    <td>
-                      <button 
-                        className={`${styles.statusBtn} ${p.isSoldOut ? styles.soldOut : styles.inStock}`}
-                        onClick={() => toggleStock(p.id)}
-                      >
-                        {p.isSoldOut ? 'Sold Out' : 'Available'}
+          <div className={styles.container}>
+            {/* Add Product Form */}
+            <section className={`glass-card ${styles.addSection}`}>
+              <h2>Add New Masterpiece</h2>
+              <form onSubmit={handleAdd} className={styles.addForm}>
+                <input 
+                  type="text" 
+                  placeholder="Product Name" 
+                  value={newProduct.name} 
+                  onChange={e => setNewProduct({...newProduct, name: e.target.value})} 
+                />
+                <input 
+                  type="text" 
+                  placeholder="Price (e.g. $2,500)" 
+                  value={newProduct.price} 
+                  onChange={e => setNewProduct({...newProduct, price: e.target.value})} 
+                />
+                <select 
+                  value={newProduct.category} 
+                  onChange={e => setNewProduct({...newProduct, category: e.target.value})}
+                >
+                  <option value="Rings">Rings</option>
+                  <option value="Necklaces">Necklaces</option>
+                  <option value="Earrings">Earrings</option>
+                  <option value="Bracelets">Bracelets</option>
+                  <option value="Watches">Watches</option>
+                  <option value="Brooches">Brooches</option>
+                </select>
+                <textarea 
+                  placeholder="Short Description" 
+                  value={newProduct.desc} 
+                  onChange={e => setNewProduct({...newProduct, desc: e.target.value})}
+                ></textarea>
+                
+                <div className={styles.imageUploadSection}>
+                  <input 
+                    type="file" 
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    ref={fileInputRef}
+                    style={{ display: 'none' }}
+                  />
+                  
+                  {!newProduct.image ? (
+                    <div className={styles.uploadPlaceholder} onClick={() => fileInputRef.current.click()}>
+                      <Upload size={24} />
+                      <span>Upload Product Image</span>
+                      <small>Max size: 1MB</small>
+                    </div>
+                  ) : (
+                    <div className={styles.imagePreviewContainer}>
+                      <img 
+                        src={newProduct.image} 
+                        alt="Preview" 
+                        className={styles.imagePreview} 
+                        onClick={() => setSelectedImage({ url: newProduct.image, name: newProduct.name })}
+                        style={{ cursor: 'pointer' }}
+                      />
+                      <button type="button" className={styles.removeImageBtn} onClick={removeImage}>
+                        <XCircle size={18} />
                       </button>
-                    </td>
-                    <td>
-                      <div className={styles.actionBtns}>
-                        {editingId === p.id ? (
-                          <button className={styles.saveBtn} onClick={() => saveEdit(p.id)}><Save size={18} /></button>
-                        ) : (
-                          <button className={styles.editBtn} onClick={() => startEdit(p)}>Edit</button>
-                        )}
-                        <button className={styles.deleteBtn} onClick={() => deleteProduct(p.id)}><Trash2 size={18} /></button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
-      </div>
+                    </div>
+                  )}
+                </div>
+                
+                <button type="submit" className={styles.addBtn}><Plus size={20} /> Add to Catalog</button>
+              </form>
+            </section>
 
-      <ImageModal 
-        isOpen={!!selectedImage} 
-        image={selectedImage?.url} 
-        title={selectedImage?.name} 
-        onClose={() => setSelectedImage(null)} 
-      />
+            {/* Product List */}
+            <section className={styles.listSection}>
+              <h2>Current Inventory</h2>
+              <div className={styles.tableWrapper}>
+                <table className={styles.table}>
+                  <thead>
+                    <tr>
+                      <th>Product</th>
+                      <th>Price</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {products.map(p => (
+                      <tr key={p.id} className={editingId === p.id ? styles.editingRow : ''}>
+                        <td>
+                          {editingId === p.id ? (
+                            <div className={styles.editProduct}>
+                              <input 
+                                type="text" 
+                                value={editData.name} 
+                                onChange={e => setEditData({...editData, name: e.target.value})} 
+                              />
+                            </div>
+                          ) : (
+                            <div className={styles.productCell}>
+                              <img 
+                                src={p.image} 
+                                alt="" 
+                                className={styles.thumb} 
+                                onClick={() => setSelectedImage({ url: p.image, name: p.name })}
+                                style={{ cursor: 'pointer' }}
+                              />
+                              <div>
+                                <strong>{p.name}</strong>
+                                <span>{p.category}</span>
+                              </div>
+                            </div>
+                          )}
+                        </td>
+                        <td>
+                          {editingId === p.id ? (
+                            <input 
+                              type="text" 
+                              value={editData.price} 
+                              onChange={e => setEditData({...editData, price: e.target.value})} 
+                            />
+                          ) : (
+                            <span className={styles.priceView}>{p.price}</span>
+                          )}
+                        </td>
+                        <td>
+                          <button 
+                            className={`${styles.statusBtn} ${p.isSoldOut ? styles.soldOut : styles.inStock}`}
+                            onClick={() => toggleStock(p.id)}
+                          >
+                            {p.isSoldOut ? 'Sold Out' : 'Available'}
+                          </button>
+                        </td>
+                        <td>
+                          <div className={styles.actionBtns}>
+                            {editingId === p.id ? (
+                              <button className={styles.saveBtn} onClick={() => saveEdit(p.id)}><Save size={18} /></button>
+                            ) : (
+                              <button className={styles.editBtn} onClick={() => startEdit(p)}>Edit</button>
+                            )}
+                            <button className={styles.deleteBtn} onClick={() => deleteProduct(p.id)}><Trash2 size={18} /></button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+
+          <ImageModal 
+            isOpen={!!selectedImage} 
+            image={selectedImage?.url} 
+            title={selectedImage?.name} 
+            onClose={() => setSelectedImage(null)} 
+          />
+        </>
+      )}
     </div>
   );
 };

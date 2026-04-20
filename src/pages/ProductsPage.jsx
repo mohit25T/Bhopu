@@ -25,51 +25,53 @@ const ProductsPage = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  if (loading) {
-    return <div className={styles.page}><div className={styles.loading}>Curating Collections...</div></div>;
-  }
-
   return (
     <div className={styles.page}>
-      <header className={styles.header}>
-        <motion.div 
-          className={styles.headerContent}
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <h1 className="gold-text">Our Collections</h1>
-          <p>Explore our masterfully manufactured jewelry collections, crafted for excellence.</p>
-        </motion.div>
-      </header>
+      {loading ? (
+        <div className={styles.loading}>Curating Collections...</div>
+      ) : (
+        <>
+          <header className={styles.header}>
+            <motion.div 
+              className={styles.headerContent}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <h1 className="gold-text">Our Collections</h1>
+              <p>Explore our masterfully manufactured jewelry collections, crafted for excellence.</p>
+            </motion.div>
+          </header>
 
-      <section className={styles.gridSection}>
-        <motion.div 
-          className={styles.grid}
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          {products && products.length > 0 ? (
-            products.map((p) => (
-              <ProductCard 
-                key={p.id} 
-                product={p} 
-                onImageClick={(product) => setSelectedProduct(product)} 
-              />
-            ))
-          ) : (
-            <p className={styles.noProducts}>No products found in the catalog.</p>
-          )}
-        </motion.div>
-      </section>
+          <section className={styles.gridSection}>
+            <motion.div 
+              className={styles.grid}
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+            >
+              {products && products.length > 0 ? (
+                products.map((p) => (
+                  <ProductCard 
+                    key={p.id} 
+                    product={p} 
+                    onImageClick={(product) => setSelectedProduct(product)} 
+                  />
+                ))
+              ) : (
+                <p className={styles.noProducts}>No products found in the catalog.</p>
+              )}
+            </motion.div>
+          </section>
 
-      <ImageModal 
-        isOpen={!!selectedProduct} 
-        image={selectedProduct?.image} 
-        title={selectedProduct?.name} 
-        onClose={() => setSelectedProduct(null)} 
-      />
+          <ImageModal 
+            isOpen={!!selectedProduct} 
+            image={selectedProduct?.image} 
+            title={selectedProduct?.name} 
+            onClose={() => setSelectedProduct(null)} 
+          />
+        </>
+      )}
     </div>
   );
 };
