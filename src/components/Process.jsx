@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import styles from './Process.module.css';
+import ImageModal from './ImageModal';
 import workshopImg from '../assets/images/workshop.png';
 
 const steps = [
@@ -11,6 +12,8 @@ const steps = [
 ];
 
 const Process = () => {
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+
   return (
     <section id="process" className={styles.process}>
       <div className={styles.container}>
@@ -21,6 +24,8 @@ const Process = () => {
             whileInView={{ clipPath: 'inset(0% 0 0 0)' }}
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+            onClick={() => setIsModalOpen(true)}
+            style={{ cursor: 'pointer' }}
           >
             <img src={workshopImg} alt="Jewelry Workshop" />
           </motion.div>
@@ -56,6 +61,13 @@ const Process = () => {
           </div>
         </div>
       </div>
+
+      <ImageModal 
+        isOpen={isModalOpen} 
+        image={workshopImg} 
+        title="Our Workshop" 
+        onClose={() => setIsModalOpen(false)} 
+      />
     </section>
   );
 };

@@ -16,14 +16,14 @@ const variants = {
   }
 };
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, onImageClick }) => {
   return (
     <motion.div 
       className={`glass-card ${styles.card} ${product.isSoldOut ? styles.soldOutCard : ''}`}
       variants={variants}
       whileHover={product.isSoldOut ? {} : { y: -10 }}
     >
-      <div className={styles.imageContainer}>
+      <div className={styles.imageContainer} onClick={() => onImageClick && onImageClick(product)}>
         <img src={product.image} alt={product.name} />
         {product.isSoldOut && <div className={styles.soldOutBadge}>Sold Out</div>}
         <div className={styles.category}>{product.category}</div>

@@ -1,9 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import styles from './Gallery.module.css';
+import ImageModal from './ImageModal';
 import collectionImg from '../assets/images/collection.png';
 
 const Gallery = () => {
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+
   return (
     <section id="portfolio" className={styles.gallery}>
       <div className={styles.header}>
@@ -17,6 +20,8 @@ const Gallery = () => {
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1 }}
+          onClick={() => setIsModalOpen(true)}
+          style={{ cursor: 'pointer' }}
         >
           <img src={collectionImg} alt="Jewelry Collection" />
           <div className={styles.caption}>
@@ -25,6 +30,13 @@ const Gallery = () => {
           </div>
         </motion.div>
       </div>
+
+      <ImageModal 
+        isOpen={isModalOpen} 
+        image={collectionImg} 
+        title="The Signature Series" 
+        onClose={() => setIsModalOpen(false)} 
+      />
     </section>
   );
 };

@@ -44,3 +44,13 @@
     padding: 40px 5%;
   }
 }
+
+.noProducts {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--text-dim);
+  padding: 100px 0;
+  font-size: 1.2rem;
+  border: 1px dashed rgba(212, 175, 55, 0.2);
+  border-radius: 12px;
+}

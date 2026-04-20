@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import ProductCard from '../components/ProductCard';
+import ImageModal from '../components/ImageModal';
 import { useProducts } from '../context/ProductContext';
 import styles from './ProductsPage.module.css';
 
@@ -16,7 +17,8 @@ const containerVariants = {
 };
 
 const ProductsPage = () => {
-  const { products } = useProducts();
+  const { products = [] } = useProducts() || {}; // Safety fallback to empty array
+  const [selectedProduct, setSelectedProduct] = useState(null);
   
   // Scroll to top on mount
   useEffect(() => {
@@ -44,11 +46,26 @@ const ProductsPage = () => {
           initial="hidden"
           animate="visible"
         >
-          {products.map((p) => (
-            <ProductCard key={p.id} product={p} />
-          ))}
+          {products && products.length > 0 ? (
+            products.map((p) => (
+              <ProductCard 
+                key={p.id} 
+                product={p} 
+                onImageClick={(product) => setSelectedProduct(product)} 
+              />
+            ))
+          ) : (
+            <p className={styles.noProducts}>No products found in the catalog.</p>
+          )}
         </motion.div>
       </section>
+
+      <ImageModal 
+        isOpen={!!selectedProduct} 
+        image={selectedProduct?.image} 
+        title={selectedProduct?.name} 
+        onClose={() => setSelectedProduct(null)} 
+      />
     </div>
   );
 };
