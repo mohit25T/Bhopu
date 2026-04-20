@@ -4,10 +4,7 @@ import react from '@vitejs/plugin-react'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    react({
-      // Explicitly disable fast refresh if it's causing issues in some environments
-      fastRefresh: process.env.NODE_ENV === 'test' ? false : true 
-    })
+    react()
   ],
   server: {
     host: '0.0.0.0',
