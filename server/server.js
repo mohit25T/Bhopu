@@ -29,42 +29,37 @@ if (!fs.existsSync(distPath)) {
 }
 app.use(express.static(distPath));
 
-// Database Connection Configuration with Deep Diagnostics
+// Database Connection Logic (Run in background)
+let isDbConnected = false;
+
 const connectDB = async () => {
-  console.log('📡 Attempting to connect to MongoDB...');
-  
-  // Debug: Validate URI presence (not the value itself)
   if (!process.env.MONGO_URI) {
     console.error('❌ CRITICAL: MONGO_URI is missing from environment variables!');
     return;
   }
 
   try {
-    const conn = await mongoose.connect(process.env.MONGO_URI, {
-      serverSelectionTimeoutMS: 5000, // Timeout after 5 seconds
+    console.log('📡 Connecting to MongoDB Atlas...');
+    await mongoose.connect(process.env.MONGO_URI, {
+      serverSelectionTimeoutMS: 5000,
     });
-    
-    console.log(`✅ Connected to MongoDB Atlas: ${conn.connection.host}`);
-    
-    app.listen(PORT, () => {
-      console.log(`🚀 Production Server running on port ${PORT}`);
-    });
+    isDbConnected = true;
+    console.log('✅ Connected to MongoDB Atlas Successfully');
   } catch (err) {
     console.error('❌ MongoDB Connection Failure:', err.message);
-    console.warn('⚠️ Server is staying alive in "Maintenance Mode" for diagnostics.');
-    
-    // Still listen on port so health check works and we avoid 502
-    app.listen(PORT, () => {
-      console.log(`🛠️ Diagnostic Server running on port ${PORT} (DB Offline)`);
-    });
   }
 };
 
-// API Routes
-// (Existing routes remain)
-
-// Health Check
-app.get('/api/health', (req, res) => res.json({ status: 'active', time: new Date() }));
+// API Check Middleware
+app.use('/api', (req, res, next) => {
+  if (!isDbConnected && req.path !== '/health') {
+    return res.status(503).json({ 
+      error: 'Database is still waking up...', 
+      message: 'Please wait a few seconds and refresh.' 
+    });
+  }
+  next();
+});
 
 // GET all products
 app.get('/api/products', async (req, res) => {
@@ -119,20 +114,29 @@ app.delete('/api/products/:id', async (req, res) => {
   }
 });
 
-// Catch-all: If any request reaches this point without being handled by API, serve the React app
+// Health Check
+app.get('/api/health', (req, res) => res.json({ 
+  status: isDbConnected ? 'active' : 'maintenance', 
+  db: isDbConnected ? 'connected' : 'disconnected'
+}));
+
+// Catch-all route
 app.use((req, res) => {
   const indexPath = path.join(distPath, 'index.html');
   if (fs.existsSync(indexPath)) {
     res.sendFile(indexPath);
   } else {
-    res.status(404).send('<h3>Bhopu Jewels: Website build files not found!</h3><p>Please ensure you have run "npm run build" and configured Render to use static serving.</p>');
+    res.status(404).send('<h3>Bhopu Jewels: Build files not found!</h3>');
   }
 });
 
-// Start Sequence
-connectDB();
+// START SERVER IMMEDIATELY (Prevents 502)
+app.listen(PORT, () => {
+  console.log(`🚀 Server active on port ${PORT}`);
+  connectDB(); // Connect to DB in background
+});
 
-// Global Shield against silent crashes
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+// Global Shield
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled Rejection:', reason);
 });
