@@ -1,36 +1,88 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import { products as initialProducts } from '../data/products';
 
 const ProductContext = createContext();
 
 export const ProductProvider = ({ children }) => {
-  const [products, setProducts] = useState(() => {
-    const saved = localStorage.getItem('bhopu_products');
-    return saved ? JSON.parse(saved) : initialProducts;
-  });
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch all products from MongoDB
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/products');
+      const data = await response.json();
+      
+      // Map _id to id for frontend compatibility
+      const formattedData = data.map(p => ({ ...p, id: p._id }));
+      setProducts(formattedData);
+    } catch (err) {
+      console.error('Error fetching products:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    localStorage.setItem('bhopu_products', JSON.stringify(products));
-  }, [products]);
+    fetchProducts();
+  }, []);
 
-  const addProduct = (newProduct) => {
-    setProducts([...products, { ...newProduct, id: Date.now(), isSoldOut: false }]);
+  const addProduct = async (newProduct) => {
+    try {
+      const response = await fetch('/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newProduct),
+      });
+      if (response.ok) fetchProducts();
+    } catch (err) {
+      console.error('Error adding product:', err);
+    }
   };
 
-  const updateProduct = (id, updatedFields) => {
-    setProducts(products.map(p => p.id === id ? { ...p, ...updatedFields } : p));
+  const updateProduct = async (id, updatedFields) => {
+    try {
+      const response = await fetch(`/api/products/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedFields),
+      });
+      if (response.ok) fetchProducts();
+    } catch (err) {
+      console.error('Error updating product:', err);
+    }
   };
 
-  const deleteProduct = (id) => {
-    setProducts(products.filter(p => p.id !== id));
+  const deleteProduct = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this masterpiece?')) return;
+    try {
+      const response = await fetch(`/api/products/${id}`, {
+        method: 'DELETE',
+      });
+      if (response.ok) fetchProducts();
+    } catch (err) {
+      console.error('Error deleting product:', err);
+    }
   };
 
-  const toggleStock = (id) => {
-    setProducts(products.map(p => p.id === id ? { ...p, isSoldOut: !p.isSoldOut } : p));
+  const toggleStock = async (id) => {
+    const product = products.find(p => p.id === id);
+    if (!product) return;
+    
+    try {
+      const response = await fetch(`/api/products/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isSoldOut: !product.isSoldOut }),
+      });
+      if (response.ok) fetchProducts();
+    } catch (err) {
+      console.error('Error toggling status:', err);
+    }
   };
 
   return (
-    <ProductContext.Provider value={{ products, addProduct, updateProduct, deleteProduct, toggleStock }}>
+    <ProductContext.Provider value={{ products, loading, addProduct, updateProduct, deleteProduct, toggleStock }}>
       {children}
     </ProductContext.Provider>
   );

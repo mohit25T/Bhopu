@@ -7,7 +7,7 @@ import AdminLogin from '../components/AdminLogin';
 import styles from './AdminDashboard.module.css';
 
 const AdminDashboard = () => {
-  const { products, addProduct, updateProduct, deleteProduct, toggleStock } = useProducts();
+  const { products, loading, addProduct, updateProduct, deleteProduct, toggleStock } = useProducts();
   
   // Security State
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
@@ -73,6 +73,10 @@ const AdminDashboard = () => {
   // Security Gate
   if (!isAuthenticated) {
     return <AdminLogin onLogin={handleLoginSuccess} />;
+  }
+
+  if (loading) {
+    return <div className={styles.adminPage}><div className={styles.loading}>Synchronizing Catalog...</div></div>;
   }
 
   return (
