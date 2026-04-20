@@ -2,6 +2,11 @@ import React, { createContext, useState, useEffect, useContext } from 'react';
 
 const ProductContext = createContext();
 
+// Detect production vs development backend
+const API_BASE_URL = import.meta.env.PROD 
+  ? 'https://b-backend-5bnq.onrender.com' 
+  : '';
+
 export const ProductProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -10,7 +15,7 @@ export const ProductProvider = ({ children }) => {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/products');
+      const response = await fetch(`${API_BASE_URL}/api/products`);
       const data = await response.json();
       
       // Map _id to id for frontend compatibility
@@ -29,7 +34,7 @@ export const ProductProvider = ({ children }) => {
 
   const addProduct = async (newProduct) => {
     try {
-      const response = await fetch('/api/products', {
+      const response = await fetch(`${API_BASE_URL}/api/products`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newProduct),
@@ -42,7 +47,7 @@ export const ProductProvider = ({ children }) => {
 
   const updateProduct = async (id, updatedFields) => {
     try {
-      const response = await fetch(`/api/products/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/products/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedFields),
@@ -56,7 +61,7 @@ export const ProductProvider = ({ children }) => {
   const deleteProduct = async (id) => {
     if (!window.confirm('Are you sure you want to delete this masterpiece?')) return;
     try {
-      const response = await fetch(`/api/products/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/products/${id}`, {
         method: 'DELETE',
       });
       if (response.ok) fetchProducts();
@@ -70,7 +75,7 @@ export const ProductProvider = ({ children }) => {
     if (!product) return;
     
     try {
-      const response = await fetch(`/api/products/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/products/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ isSoldOut: !product.isSoldOut }),
