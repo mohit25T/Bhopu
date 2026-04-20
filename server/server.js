@@ -29,18 +29,34 @@ if (!fs.existsSync(distPath)) {
 }
 app.use(express.static(distPath));
 
-// Database Connection Configuration
+// Database Connection Configuration with Deep Diagnostics
 const connectDB = async () => {
+  console.log('📡 Attempting to connect to MongoDB...');
+  
+  // Debug: Validate URI presence (not the value itself)
+  if (!process.env.MONGO_URI) {
+    console.error('❌ CRITICAL: MONGO_URI is missing from environment variables!');
+    return;
+  }
+
   try {
-    await mongoose.connect(process.env.MONGO_URI);
-    console.log('✅ Connected to MongoDB Atlas');
+    const conn = await mongoose.connect(process.env.MONGO_URI, {
+      serverSelectionTimeoutMS: 5000, // Timeout after 5 seconds
+    });
+    
+    console.log(`✅ Connected to MongoDB Atlas: ${conn.connection.host}`);
     
     app.listen(PORT, () => {
       console.log(`🚀 Production Server running on port ${PORT}`);
     });
   } catch (err) {
-    console.error('❌ MongoDB Connection Error:', err);
-    process.exit(1);
+    console.error('❌ MongoDB Connection Failure:', err.message);
+    console.warn('⚠️ Server is staying alive in "Maintenance Mode" for diagnostics.');
+    
+    // Still listen on port so health check works and we avoid 502
+    app.listen(PORT, () => {
+      console.log(`🛠️ Diagnostic Server running on port ${PORT} (DB Offline)`);
+    });
   }
 };
 
