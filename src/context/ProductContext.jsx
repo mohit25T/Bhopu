@@ -2,10 +2,8 @@ import React, { createContext, useState, useEffect, useContext } from 'react';
 
 const ProductContext = createContext();
 
-// Detect production vs development backend
-const API_BASE_URL = import.meta.env.PROD 
-  ? 'https://b-backend-5bnq.onrender.com' 
-  : '';
+// Use relative paths since frontend and backend are unified
+const API_BASE_URL = '';
 
 export const ProductProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
