@@ -4,18 +4,18 @@ const ProductContext = createContext();
 
 // Use relative paths since frontend and backend are unified
 // Use the global backend URL defined in .env
-const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+const API_BASE_URL = "https://b-backend-5bnq.onrender.com";
 
 export const ProductProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch all products from MongoDB
+  // Fetch all products from MongoDB    
   const fetchProducts = async () => {
     try {
       setLoading(true);
       const response = await fetch(`${API_BASE_URL}/api/products`);
-      
+
       if (!response.ok) {
         throw new Error(`Server responded with ${response.status}`);
       }
@@ -26,7 +26,7 @@ export const ProductProvider = ({ children }) => {
       }
 
       const data = await response.json();
-      
+
       // Map _id to id for frontend compatibility
       const formattedData = data.map(p => ({ ...p, id: p._id }));
       setProducts(formattedData);
@@ -82,7 +82,7 @@ export const ProductProvider = ({ children }) => {
   const toggleStock = async (id) => {
     const product = products.find(p => p.id === id);
     if (!product) return;
-    
+
     try {
       const response = await fetch(`${API_BASE_URL}/api/products/${id}`, {
         method: 'PATCH',
