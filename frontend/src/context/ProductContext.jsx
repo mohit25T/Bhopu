@@ -3,7 +3,8 @@ import React, { createContext, useState, useEffect, useContext } from 'react';
 const ProductContext = createContext();
 
 // Use relative paths since frontend and backend are unified
-const API_BASE_URL = '';
+// Use the global backend URL defined in .env
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
 export const ProductProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
