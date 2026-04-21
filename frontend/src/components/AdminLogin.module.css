@@ -1,5 +1,6 @@
 .loginPage {
-  min-height: calc(100vh - 180px); /* Adjust for navbar and footer */
+  min-height: calc(100vh - 180px);
+  /* Adjust for navbar and footer */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -147,9 +148,19 @@
 }
 
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  75% { transform: translateX(5px); }
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-5px);
+  }
+
+  75% {
+    transform: translateX(5px);
+  }
 }
 
 @media (max-width: 768px) {
